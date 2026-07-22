@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:rifino/core/theme/rifino_colors.dart';
 import 'package:rifino/core/theme/rifino_spacing.dart';
 import 'package:rifino/shared/widgets/rifino_card.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -236,26 +237,30 @@ class _AboutCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const RifinoCard(
+    return RifinoCard(
       padding: EdgeInsets.zero,
       child: Column(
         children: [
-          _InfoRow(
+          const _InfoRow(
             icon: Icons.info_rounded,
             title: 'Version',
             value: '1.0.0',
           ),
-          _InsetDivider(),
-          _InfoRow(
+          const _InsetDivider(),
+          const _InfoRow(
             icon: Icons.favorite_rounded,
             title: 'Fait pour le Rif',
           ),
-          _InsetDivider(),
+          const _InsetDivider(),
           _InfoRow(
             icon: Icons.mail_rounded,
             title: 'Contact',
             value: 'contact.kariihab@gmail.com',
             multilineValue: true,
+            onTap: () => launchUrl(
+              Uri.parse('https://github.com/Waa-Ihaab/RifiNOAPP'),
+              mode: LaunchMode.externalApplication,
+            ),
           ),
         ],
       ),
@@ -312,12 +317,14 @@ class _InfoRow extends StatelessWidget {
     required this.title,
     this.value,
     this.multilineValue = false,
+    this.onTap,
   });
 
   final IconData icon;
   final String title;
   final String? value;
   final bool multilineValue;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -334,7 +341,7 @@ class _InfoRow extends StatelessWidget {
       ),
     );
 
-    return ConstrainedBox(
+    final row = ConstrainedBox(
       constraints: BoxConstraints(minHeight: multilineValue ? 76 : 64),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
@@ -368,6 +375,11 @@ class _InfoRow extends StatelessWidget {
         ),
       ),
     );
+
+    final onTap = this.onTap;
+    if (onTap == null) return row;
+
+    return InkWell(onTap: onTap, child: row);
   }
 }
 class _InsetDivider extends StatelessWidget {
