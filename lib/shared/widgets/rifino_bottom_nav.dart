@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:rifino/app/app_route.dart';
 import 'package:rifino/core/theme/rifino_colors.dart';
+import 'package:rifino/shared/localization/rifino_language.dart';
 
 class RifinoBottomNav extends StatelessWidget {
   const RifinoBottomNav({
@@ -16,22 +17,22 @@ class RifinoBottomNav extends StatelessWidget {
     _RifinoTab(
       route: AppRoute.home,
       icon: Icons.home_rounded,
-      label: 'Accueil',
+      labelKey: _RifinoTabLabel.home,
     ),
     _RifinoTab(
       route: AppRoute.learning,
       icon: Icons.school_rounded,
-      label: 'Apprendre',
+      labelKey: _RifinoTabLabel.learning,
     ),
     _RifinoTab(
       route: AppRoute.saved,
       icon: Icons.bookmark_rounded,
-      label: 'Enregistr\u00e9s',
+      labelKey: _RifinoTabLabel.saved,
     ),
     _RifinoTab(
       route: AppRoute.settings,
       icon: Icons.settings_rounded,
-      label: 'R\u00e9glages',
+      labelKey: _RifinoTabLabel.settings,
     ),
   ];
 
@@ -61,6 +62,7 @@ class RifinoBottomNav extends StatelessWidget {
                 child: _RifinoTabButton(
                   tab: tab,
                   active: _isActive(tab.route),
+                  label: _labelFor(context, tab.labelKey),
                   onTap: () => onSelected(tab.route),
                 ),
               ),
@@ -83,17 +85,28 @@ class RifinoBottomNav extends StatelessWidget {
       AppRoute.settings => route == AppRoute.settings,
     };
   }
+
+  String _labelFor(BuildContext context, _RifinoTabLabel labelKey) {
+    return switch (labelKey) {
+      _RifinoTabLabel.home => RifinoText.home(context),
+      _RifinoTabLabel.learning => RifinoText.learning(context),
+      _RifinoTabLabel.saved => RifinoText.saved(context),
+      _RifinoTabLabel.settings => RifinoText.settings(context),
+    };
+  }
 }
 
 class _RifinoTabButton extends StatelessWidget {
   const _RifinoTabButton({
     required this.tab,
     required this.active,
+    required this.label,
     required this.onTap,
   });
 
   final _RifinoTab tab;
   final bool active;
+  final String label;
   final VoidCallback onTap;
 
   @override
@@ -126,7 +139,7 @@ class _RifinoTabButton extends StatelessWidget {
                 Icon(tab.icon, color: color, size: 23),
                 const SizedBox(height: 2),
                 Text(
-                  tab.label,
+                  label,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
@@ -149,10 +162,17 @@ class _RifinoTab {
   const _RifinoTab({
     required this.route,
     required this.icon,
-    required this.label,
+    required this.labelKey,
   });
 
   final AppRoute route;
   final IconData icon;
-  final String label;
+  final _RifinoTabLabel labelKey;
+}
+
+enum _RifinoTabLabel {
+  home,
+  learning,
+  saved,
+  settings,
 }

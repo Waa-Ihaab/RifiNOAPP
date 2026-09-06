@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:rifino/core/theme/rifino_colors.dart';
 import 'package:rifino/core/theme/rifino_spacing.dart';
+import 'package:rifino/shared/localization/rifino_language.dart';
 import 'package:rifino/shared/widgets/rifino_logo.dart';
 import 'package:rifino/shared/widgets/rifino_primary_button.dart';
 
@@ -37,32 +38,32 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   static const _notificationChannel = MethodChannel('rifino/notifications');
 
   static const _sourceOptions = [
-    _OnboardingOption('Facebook', Icons.facebook),
-    _OnboardingOption('TikTok', Icons.music_note_rounded),
-    _OnboardingOption('Instagram', Icons.camera_alt_outlined),
-    _OnboardingOption('Google', Icons.search_rounded),
-    _OnboardingOption('App Store', Icons.apps_rounded),
-    _OnboardingOption('Un ami', Icons.person_outline_rounded),
+    _OnboardingOption('Facebook', 'Facebook', Icons.facebook),
+    _OnboardingOption('TikTok', 'TikTok', Icons.music_note_rounded),
+    _OnboardingOption('Instagram', 'Instagram', Icons.camera_alt_outlined),
+    _OnboardingOption('Google', 'Google', Icons.search_rounded),
+    _OnboardingOption('App Store', 'App Store', Icons.apps_rounded),
+    _OnboardingOption('Un ami', 'A friend', Icons.person_outline_rounded),
   ];
 
   static const _levelOptions = [
-    _OnboardingOption('Nul', Icons.sentiment_dissatisfied_outlined),
-    _OnboardingOption('Débutant', Icons.school_outlined),
-    _OnboardingOption('Intermédiaire', Icons.trending_up),
-    _OnboardingOption('Expert', Icons.emoji_events_outlined),
+    _OnboardingOption('Nul', 'None', Icons.sentiment_dissatisfied_outlined),
+    _OnboardingOption('Débutant', 'Beginner', Icons.school_outlined),
+    _OnboardingOption('Intermédiaire', 'Intermediate', Icons.trending_up),
+    _OnboardingOption('Expert', 'Expert', Icons.emoji_events_outlined),
   ];
 
   static const _reasonOptions = [
-    _OnboardingOption('Parler avec la famille', Icons.home_outlined),
-    _OnboardingOption('Parler avec les amis', Icons.groups_outlined),
-    _OnboardingOption('Pour le fun', Icons.celebration_outlined),
-    _OnboardingOption('Pour moi-même', Icons.favorite_border_rounded),
+    _OnboardingOption('Parler avec la famille', 'Talk with family', Icons.home_outlined),
+    _OnboardingOption('Parler avec les amis', 'Talk with friends', Icons.groups_outlined),
+    _OnboardingOption('Pour le fun', 'For fun', Icons.celebration_outlined),
+    _OnboardingOption('Pour moi-même', 'For myself', Icons.favorite_border_rounded),
   ];
 
   static const _goalOptions = [
-    _OnboardingOption('10 min/j', Icons.timer_outlined),
-    _OnboardingOption('15 min/j', Icons.av_timer_rounded),
-    _OnboardingOption('Skip', Icons.skip_next_rounded),
+    _OnboardingOption('10 min/j', '10 min/day', Icons.timer_outlined),
+    _OnboardingOption('15 min/j', '15 min/day', Icons.av_timer_rounded),
+    _OnboardingOption('Skip', 'Skip', Icons.skip_next_rounded),
   ];
 
   int _step = 0;
@@ -129,8 +130,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
       if (!granted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Notifications non activées pour le moment.'),
+          SnackBar(
+            content: Text(
+              RifinoText.tr(
+                context,
+                fr: 'Notifications non activées pour le moment.',
+                en: 'Notifications are not enabled for now.',
+              ),
+            ),
           ),
         );
       }
@@ -138,8 +145,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       if (!mounted) return;
       setState(() => _notificationsEnabled = false);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Impossible de demander la permission de notification.'),
+        SnackBar(
+          content: Text(
+            RifinoText.tr(
+              context,
+              fr: 'Impossible de demander la permission de notification.',
+              en: 'Unable to request notification permission.',
+            ),
+          ),
         ),
       );
     } on MissingPluginException {
@@ -152,29 +165,61 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   Widget build(BuildContext context) {
     final content = switch (_step) {
       0 => _ChoiceStep(
-          title: 'Comment tu as entendu parler de Rifino ?',
-          subtitle: 'Ça nous aide à savoir où la communauté nous trouve.',
+          title: RifinoText.tr(
+            context,
+            fr: 'Comment tu as entendu parler de Rifino ?',
+            en: 'How did you hear about Rifino?',
+          ),
+          subtitle: RifinoText.tr(
+            context,
+            fr: 'Ça nous aide à savoir où la communauté nous trouve.',
+            en: 'This helps us know where the community finds us.',
+          ),
           options: _sourceOptions,
           selectedValue: _source,
           onSelected: (value) => setState(() => _source = value),
         ),
       1 => _ChoiceStep(
-          title: 'Ton niveau en rifain ?',
-          subtitle: 'Choisis le niveau qui te ressemble maintenant.',
+          title: RifinoText.tr(
+            context,
+            fr: 'Ton niveau en rifain ?',
+            en: 'Your level in Rif?',
+          ),
+          subtitle: RifinoText.tr(
+            context,
+            fr: 'Choisis le niveau qui te ressemble maintenant.',
+            en: 'Choose the level that fits you right now.',
+          ),
           options: _levelOptions,
           selectedValue: _level,
           onSelected: (value) => setState(() => _level = value),
         ),
       2 => _ChoiceStep(
-          title: 'Pourquoi tu utilises Rifino ?',
-          subtitle: 'On adaptera mieux les leçons et les rappels.',
+          title: RifinoText.tr(
+            context,
+            fr: 'Pourquoi tu utilises Rifino ?',
+            en: 'Why do you use Rifino?',
+          ),
+          subtitle: RifinoText.tr(
+            context,
+            fr: 'On adaptera mieux les leçons et les rappels.',
+            en: 'We will better adapt lessons and reminders.',
+          ),
           options: _reasonOptions,
           selectedValue: _reason,
           onSelected: (value) => setState(() => _reason = value),
         ),
       3 => _ChoiceStep(
-          title: 'Tu veux fixer un objectif ?',
-          subtitle: 'Un petit rythme régulier suffit pour progresser.',
+          title: RifinoText.tr(
+            context,
+            fr: 'Tu veux fixer un objectif ?',
+            en: 'Do you want to set a goal?',
+          ),
+          subtitle: RifinoText.tr(
+            context,
+            fr: 'Un petit rythme régulier suffit pour progresser.',
+            en: 'A small regular rhythm is enough to progress.',
+          ),
           options: _goalOptions,
           selectedValue: _goal,
           onSelected: (value) => setState(() => _goal = value),
@@ -231,7 +276,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             Padding(
               padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
               child: RifinoPrimaryButton(
-                label: _step == 5 ? 'Entrer dans Rifino' : 'Continuer',
+                label: _step == 5
+                    ? RifinoText.tr(context, fr: 'Entrer dans Rifino', en: 'Enter Rifino')
+                    : RifinoText.tr(context, fr: 'Continuer', en: 'Continue'),
                 icon: _step == 5 ? Icons.home_rounded : Icons.arrow_forward_rounded,
                 isLoading: _isSaving,
                 onPressed: _canContinue && !_isSaving ? _next : null,
@@ -302,11 +349,22 @@ class _NotificationStep extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView(
       children: [
-        Text('Activer les notifications ?', style: Theme.of(context).textTheme.headlineMedium),
+        Text(
+          RifinoText.tr(
+            context,
+            fr: 'Activer les notifications ?',
+            en: 'Enable notifications?',
+          ),
+          style: Theme.of(context).textTheme.headlineMedium,
+        ),
         const SizedBox(height: RifinoSpacing.xs),
-        const Text(
-          'Rifino pourra te rappeler ton objectif et tes mots à réviser.',
-          style: TextStyle(
+        Text(
+          RifinoText.tr(
+            context,
+            fr: 'Rifino pourra te rappeler ton objectif et tes mots à réviser.',
+            en: 'Rifino can remind you about your goal and words to review.',
+          ),
+          style: const TextStyle(
             color: RifinoColors.textSecondary,
             fontSize: 15,
             fontWeight: FontWeight.w600,
@@ -334,13 +392,21 @@ class _NotificationStep extends StatelessWidget {
               backgroundColor: Color(0xFFEAF2FF),
               child: Icon(Icons.notifications_active_outlined, color: RifinoColors.accentBlue),
             ),
-            title: const Text(
-              'Me rappeler de pratiquer',
-              style: TextStyle(fontWeight: FontWeight.w900),
+            title: Text(
+              RifinoText.tr(
+                context,
+                fr: 'Me rappeler de pratiquer',
+                en: 'Remind me to practice',
+              ),
+              style: const TextStyle(fontWeight: FontWeight.w900),
             ),
-            subtitle: const Text(
-              'Tu peux changer ça plus tard.',
-              style: TextStyle(color: RifinoColors.textSecondary),
+            subtitle: Text(
+              RifinoText.tr(
+                context,
+                fr: 'Tu peux changer ça plus tard.',
+                en: 'You can change this later.',
+              ),
+              style: const TextStyle(color: RifinoColors.textSecondary),
             ),
           ),
         ),
@@ -380,15 +446,19 @@ class _WelcomeStep extends StatelessWidget {
           ),
           const SizedBox(height: RifinoSpacing.xl),
           Text(
-            'Azul, bienvenue !',
+            RifinoText.tr(context, fr: 'Azul, bienvenue !', en: 'Azul, welcome!'),
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.headlineLarge,
           ),
           const SizedBox(height: RifinoSpacing.sm),
-          const Text(
-            'Ton espace Rifino est prêt. On commence doucement, avec des mots utiles et un rythme simple.',
+          Text(
+            RifinoText.tr(
+              context,
+              fr: 'Ton espace Rifino est prêt. On commence doucement, avec des mots utiles et un rythme simple.',
+              en: 'Your Rifino space is ready. We start gently, with useful words and a simple rhythm.',
+            ),
             textAlign: TextAlign.center,
-            style: TextStyle(
+            style: const TextStyle(
               color: RifinoColors.textSecondary,
               fontSize: 16,
               fontWeight: FontWeight.w600,
@@ -414,6 +484,10 @@ class _OptionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final label = RifinoLanguageScope.isEnglish(context)
+        ? option.englishLabel
+        : option.label;
+
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(RifinoRadius.lg),
@@ -440,7 +514,7 @@ class _OptionTile extends StatelessWidget {
             const SizedBox(width: RifinoSpacing.md),
             Expanded(
               child: Text(
-                option.label,
+                label,
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w900,
@@ -459,8 +533,9 @@ class _OptionTile extends StatelessWidget {
 }
 
 class _OnboardingOption {
-  const _OnboardingOption(this.label, this.icon);
+  const _OnboardingOption(this.label, this.englishLabel, this.icon);
 
   final String label;
+  final String englishLabel;
   final IconData icon;
 }

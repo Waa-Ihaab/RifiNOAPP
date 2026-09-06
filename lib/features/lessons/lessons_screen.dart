@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:rifino/core/theme/rifino_colors.dart';
 import 'package:rifino/core/theme/rifino_spacing.dart';
 import 'package:rifino/shared/data/lesson_data.dart';
+import 'package:rifino/shared/localization/rifino_language.dart';
 import 'package:rifino/shared/models/saved_entry.dart';
 import 'package:rifino/shared/widgets/rifino_card.dart';
 import 'package:rifino/shared/widgets/rifino_top_bar.dart';
@@ -108,7 +109,10 @@ class _LessonsScreenState extends State<LessonsScreen> {
     final progress = finishedCount / rifinoLessons.length;
 
     return Scaffold(
-      appBar: RifinoTopBar(title: 'Leçons', onBack: widget.onBack),
+      appBar: RifinoTopBar(
+        title: RifinoText.tr(context, fr: 'Leçons', en: 'Lessons'),
+        onBack: widget.onBack,
+      ),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(18, 16, 18, 96),
         children: [
@@ -118,14 +122,18 @@ class _LessonsScreenState extends State<LessonsScreen> {
             progress: progress,
           ),
           const SizedBox(height: RifinoSpacing.lg),
-          const Text(
-            'Parcours',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900),
+          Text(
+            RifinoText.tr(context, fr: 'Parcours', en: 'Path'),
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w900),
           ),
           const SizedBox(height: 6),
-          const Text(
-            'Avance leçon par leçon et valide ce que tu as appris.',
-            style: TextStyle(
+          Text(
+            RifinoText.tr(
+              context,
+              fr: 'Avance leçon par leçon et valide ce que tu as appris.',
+              en: 'Move lesson by lesson and validate what you learned.',
+            ),
+            style: const TextStyle(
               color: RifinoColors.textSecondary,
               fontWeight: FontWeight.w700,
             ),
@@ -151,8 +159,13 @@ class _LessonsScreenState extends State<LessonsScreen> {
                   SavedEntry(
                     id: _lessonSavedId(rifinoLessons[i]),
                     kind: SavedEntryKind.lesson,
-                    title: rifinoLessons[i].title,
-                    subtitle: '${rifinoLessons[i].level} - ${rifinoLessons[i].description}',
+                    title: RifinoText.lessonTitle(
+                      context,
+                      rifinoLessons[i].id,
+                      rifinoLessons[i].title,
+                    ),
+                    subtitle:
+                        '${RifinoText.lessonLevel(context, rifinoLessons[i].level)} - ${RifinoText.lessonDescription(context, rifinoLessons[i].id, rifinoLessons[i].description)}',
                   ),
                 );
               },
@@ -201,9 +214,9 @@ class _LessonsProgressHeader extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                'Mes leçons',
-                style: TextStyle(
+              Text(
+                RifinoText.tr(context, fr: 'Mes leçons', en: 'My lessons'),
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: 22,
                   fontWeight: FontWeight.w900,
@@ -216,7 +229,11 @@ class _LessonsProgressHeader extends StatelessWidget {
                   borderRadius: BorderRadius.circular(7),
                 ),
                 child: Text(
-                  '$finishedCount/$totalCount finies',
+                  RifinoText.tr(
+                    context,
+                    fr: '$finishedCount/$totalCount finies',
+                    en: '$finishedCount/$totalCount done',
+                  ),
                   style: const TextStyle(
                     color: RifinoColors.accentBlue,
                     fontSize: 11,
@@ -238,7 +255,11 @@ class _LessonsProgressHeader extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            '$percent% complété',
+            RifinoText.tr(
+              context,
+              fr: '$percent% complété',
+              en: '$percent% complete',
+            ),
             style: const TextStyle(
               color: Color(0xFFDCE8F7),
               fontSize: 12,
@@ -323,7 +344,7 @@ class _LessonCard extends StatelessWidget {
                             children: [
                               Flexible(
                                 child: Text(
-                                  lesson.level,
+                                  RifinoText.lessonLevel(context, lesson.level),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
@@ -341,7 +362,7 @@ class _LessonCard extends StatelessWidget {
                           ),
                           const SizedBox(height: 3),
                           Text(
-                            lesson.title,
+                            RifinoText.lessonTitle(context, lesson.id, lesson.title),
                             style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w900,
@@ -349,7 +370,11 @@ class _LessonCard extends StatelessWidget {
                           ),
                           const SizedBox(height: 3),
                           Text(
-                            lesson.description,
+                            RifinoText.lessonDescription(
+                              context,
+                              lesson.id,
+                              lesson.description,
+                            ),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
@@ -362,7 +387,9 @@ class _LessonCard extends StatelessWidget {
                       ),
                     ),
                     IconButton(
-                      tooltip: saved ? 'Retirer' : 'Enregistrer',
+                      tooltip: saved
+                          ? RifinoText.tr(context, fr: 'Retirer', en: 'Remove')
+                          : RifinoText.tr(context, fr: 'Enregistrer', en: 'Save'),
                       onPressed: onToggleSaved,
                       icon: Icon(saved ? Icons.bookmark : Icons.bookmark_border),
                       color: saved ? RifinoColors.accentBlue : RifinoColors.purple,
@@ -390,7 +417,10 @@ class _LessonCard extends StatelessWidget {
                           runSpacing: 8,
                           children: [
                             for (final word in lesson.vocabulary)
-                              _VocabularyChip(text: word.label),
+                              _VocabularyChip(
+                                text:
+                                    '${word.rif} - ${RifinoText.word(context, word.fr)}',
+                              ),
                           ],
                         ),
                       ),
@@ -407,7 +437,17 @@ class _LessonCard extends StatelessWidget {
                             size: 20,
                           ),
                           label: Text(
-                            completed ? 'Revoir le cours' : 'Entrer dans le cours',
+                            completed
+                                ? RifinoText.tr(
+                                    context,
+                                    fr: 'Revoir le cours',
+                                    en: 'Review the course',
+                                  )
+                                : RifinoText.tr(
+                                    context,
+                                    fr: 'Entrer dans le cours',
+                                    en: 'Enter the course',
+                                  ),
                           ),
                           style: FilledButton.styleFrom(
                             backgroundColor:
@@ -441,9 +481,9 @@ class _CompletedBadge extends StatelessWidget {
         color: RifinoColors.success.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(RifinoRadius.pill),
       ),
-      child: const Text(
-        'Fini',
-        style: TextStyle(
+      child: Text(
+        RifinoText.tr(context, fr: 'Fini', en: 'Done'),
+        style: const TextStyle(
           color: RifinoColors.success,
           fontSize: 10,
           fontWeight: FontWeight.w900,
@@ -516,7 +556,7 @@ class _LessonDetailView extends StatelessWidget {
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    lesson.title,
+                    RifinoText.lessonTitle(context, lesson.id, lesson.title),
                     textAlign: TextAlign.center,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
@@ -531,7 +571,7 @@ class _LessonDetailView extends StatelessWidget {
                 _SoftIconButton(
                   icon: saved ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
                   color: saved ? RifinoColors.accentBlue : RifinoColors.primary,
-                  onPressed: () => onToggleSaved(_lessonSavedEntry(lesson)),
+                  onPressed: () => onToggleSaved(_lessonSavedEntry(context, lesson)),
                 ),
               ],
             ),
@@ -556,9 +596,19 @@ class _LessonDetailView extends StatelessWidget {
           const SizedBox(height: 14),
           Row(
             children: [
-              _LessonPill(text: lesson.level, color: lessonColor),
+              _LessonPill(
+                text: RifinoText.lessonLevel(context, lesson.level),
+                color: lessonColor,
+              ),
               const SizedBox(width: 8),
-              _LessonPill(text: '${lesson.vocabulary.length} mots', color: lessonColor),
+              _LessonPill(
+                text: RifinoText.tr(
+                  context,
+                  fr: '${lesson.vocabulary.length} mots',
+                  en: '${lesson.vocabulary.length} words',
+                ),
+                color: lessonColor,
+              ),
             ],
           ),
           const SizedBox(height: 20),
@@ -576,7 +626,7 @@ class _LessonDetailView extends StatelessWidget {
               ],
             ),
             child: Text(
-              lesson.description,
+              RifinoText.lessonDescription(context, lesson.id, lesson.description),
               style: const TextStyle(
                 color: RifinoColors.textPrimary,
                 fontSize: 16,
@@ -586,7 +636,7 @@ class _LessonDetailView extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 22),
-          const _DetailTitle('Vocabulaire'),
+          _DetailTitle(RifinoText.tr(context, fr: 'Vocabulaire', en: 'Vocabulary')),
           const SizedBox(height: RifinoSpacing.sm),
           for (final word in lesson.vocabulary)
             Padding(
@@ -599,17 +649,19 @@ class _LessonDetailView extends StatelessWidget {
               ),
             ),
           const SizedBox(height: RifinoSpacing.md),
-          const _DetailTitle('Cours'),
+          _DetailTitle(RifinoText.tr(context, fr: 'Cours', en: 'Course')),
           const SizedBox(height: RifinoSpacing.sm),
-          for (final paragraph in lesson.content)
+          for (final paragraph
+              in RifinoText.lessonContent(context, lesson.id, lesson.content))
             Padding(
               padding: const EdgeInsets.only(bottom: RifinoSpacing.sm),
               child: _LessonTextCard(text: paragraph),
             ),
           const SizedBox(height: RifinoSpacing.md),
-          const _DetailTitle('Exemples'),
+          _DetailTitle(RifinoText.tr(context, fr: 'Exemples', en: 'Examples')),
           const SizedBox(height: RifinoSpacing.sm),
-          for (final example in lesson.examples)
+          for (final example
+              in RifinoText.lessonExamples(context, lesson.id, lesson.examples))
             Padding(
               padding: const EdgeInsets.only(bottom: RifinoSpacing.sm),
               child: _ExampleRow(text: example),
@@ -618,7 +670,7 @@ class _LessonDetailView extends StatelessWidget {
           FilledButton.icon(
             onPressed: onComplete,
             icon: const Icon(Icons.check_circle_outline),
-            label: const Text('Terminer'),
+            label: Text(RifinoText.tr(context, fr: 'Terminer', en: 'Finish')),
             style: FilledButton.styleFrom(backgroundColor: RifinoColors.success),
           ),
         ],
@@ -777,7 +829,7 @@ class _VocabularyRow extends StatelessWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  word.fr,
+                  RifinoText.word(context, word.fr),
                   style: const TextStyle(
                     color: RifinoColors.textSecondary,
                     fontSize: 14,
@@ -799,7 +851,7 @@ class _VocabularyRow extends StatelessWidget {
           _TinyCircleButton(
             icon: saved ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
             color: saved ? RifinoColors.accentBlue : RifinoColors.textSecondary,
-            onPressed: () => onToggleSaved(_vocabularySavedEntry(lesson, word)),
+            onPressed: () => onToggleSaved(_vocabularySavedEntry(context, lesson, word)),
           ),
         ],
       ),
@@ -874,21 +926,27 @@ String _vocabularySavedId(RifinoLesson lesson, RifinoVocabularyWord word) {
   return 'lesson-word:${lesson.id}:${word.rif}:${word.fr}';
 }
 
-SavedEntry _lessonSavedEntry(RifinoLesson lesson) {
+SavedEntry _lessonSavedEntry(BuildContext context, RifinoLesson lesson) {
   return SavedEntry(
     id: _lessonSavedId(lesson),
     kind: SavedEntryKind.lesson,
-    title: lesson.title,
-    subtitle: '${lesson.level} - ${lesson.description}',
+    title: RifinoText.lessonTitle(context, lesson.id, lesson.title),
+    subtitle:
+        '${RifinoText.lessonLevel(context, lesson.level)} - ${RifinoText.lessonDescription(context, lesson.id, lesson.description)}',
   );
 }
 
-SavedEntry _vocabularySavedEntry(RifinoLesson lesson, RifinoVocabularyWord word) {
+SavedEntry _vocabularySavedEntry(
+  BuildContext context,
+  RifinoLesson lesson,
+  RifinoVocabularyWord word,
+) {
   return SavedEntry(
     id: _vocabularySavedId(lesson, word),
     kind: SavedEntryKind.word,
     title: word.rif,
-    subtitle: '${word.fr} - ${lesson.title}',
+    subtitle:
+        '${RifinoText.word(context, word.fr)} - ${RifinoText.lessonTitle(context, lesson.id, lesson.title)}',
   );
 }
 

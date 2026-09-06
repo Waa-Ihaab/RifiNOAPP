@@ -5,6 +5,7 @@ import 'package:rifino/core/theme/rifino_colors.dart';
 import 'package:rifino/core/theme/rifino_spacing.dart';
 import 'package:rifino/core/theme/rifino_theme.dart';
 import 'package:rifino/features/onboarding/onboarding_screen.dart';
+import 'package:rifino/shared/localization/rifino_language.dart';
 import 'package:rifino/shared/widgets/rifino_logo.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -17,9 +18,11 @@ class RifinoApp extends StatefulWidget {
 
 class _RifinoAppState extends State<RifinoApp> {
   static const _onboardingDoneKey = 'rifino.onboarding.done';
+  static const _languageKey = 'rifino.language.code';
   static const _onboardingResponseService = OnboardingResponseService();
 
   bool? _hasCompletedOnboarding;
+  String _languageCode = 'fr';
 
   @override
   void initState() {
@@ -32,7 +35,15 @@ class _RifinoAppState extends State<RifinoApp> {
     if (!mounted) return;
     setState(() {
       _hasCompletedOnboarding = preferences.getBool(_onboardingDoneKey) ?? false;
+      _languageCode = preferences.getString(_languageKey) ?? 'fr';
     });
+  }
+
+  Future<void> _setLanguage(String languageCode) async {
+    final preferences = await SharedPreferences.getInstance();
+    await preferences.setString(_languageKey, languageCode);
+    if (!mounted) return;
+    setState(() => _languageCode = languageCode);
   }
 
   Future<void> _completeOnboarding(OnboardingProfile profile) async {
@@ -60,15 +71,21 @@ class _RifinoAppState extends State<RifinoApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Rifino',
-      debugShowCheckedModeBanner: false,
-      theme: RifinoTheme.light,
-      home: _hasCompletedOnboarding == null
-          ? const _StartupScreen()
-          : _hasCompletedOnboarding!
-              ? const AppShell()
-              : OnboardingScreen(onComplete: _completeOnboarding),
+    return RifinoLanguageScope(
+      languageCode: _languageCode,
+      child: MaterialApp(
+        title: 'Rifino',
+        debugShowCheckedModeBanner: false,
+        theme: RifinoTheme.light,
+        home: _hasCompletedOnboarding == null
+            ? const _StartupScreen()
+            : _hasCompletedOnboarding!
+                ? AppShell(
+                    languageCode: _languageCode,
+                    onLanguageChanged: _setLanguage,
+                  )
+                : OnboardingScreen(onComplete: _completeOnboarding),
+      ),
     );
   }
 }

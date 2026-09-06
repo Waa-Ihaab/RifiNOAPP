@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:rifino/core/theme/rifino_colors.dart';
 import 'package:rifino/core/theme/rifino_spacing.dart';
 import 'package:rifino/shared/data/dictionary_data.dart';
+import 'package:rifino/shared/localization/rifino_language.dart';
 import 'package:rifino/shared/widgets/rifino_card.dart';
 import 'package:rifino/shared/widgets/rifino_top_bar.dart';
 
@@ -114,7 +115,11 @@ class _QuizScreenState extends State<QuizScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Question ${_index + 1}/${_questions.length}',
+                          RifinoText.tr(
+                            context,
+                            fr: 'Question ${_index + 1}/${_questions.length}',
+                            en: 'Question ${_index + 1}/${_questions.length}',
+                          ),
                           style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w900),
                         ),
                         Text(
@@ -181,18 +186,18 @@ class _QuestionCard extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Traduis en rifain',
-            style: TextStyle(
+          Text(
+            RifinoText.tr(context, fr: 'Traduis en rifain', en: 'Translate into Rif'),
+            style: const TextStyle(
               color: RifinoColors.purple,
               fontSize: 12,
               fontWeight: FontWeight.w900,
             ),
           ),
           const SizedBox(height: RifinoSpacing.md),
-          const Text(
-            'Que veut dire',
-            style: TextStyle(
+          Text(
+            RifinoText.tr(context, fr: 'Que veut dire', en: 'What does this mean?'),
+            style: const TextStyle(
               color: RifinoColors.textSecondary,
               fontWeight: FontWeight.w800,
             ),
@@ -200,7 +205,7 @@ class _QuestionCard extends StatelessWidget {
           const SizedBox(height: 4),
           Center(
             child: Text(
-              question.prompt,
+              RifinoText.word(context, question.prompt),
               textAlign: TextAlign.center,
               style: const TextStyle(
                 color: RifinoColors.textPrimary,
@@ -225,7 +230,11 @@ class _QuestionCard extends StatelessWidget {
             child: FilledButton.icon(
               onPressed: selected == null ? null : onSubmit,
               icon: Icon(isLastQuestion ? Icons.done_all_rounded : Icons.arrow_forward_rounded),
-              label: Text(isLastQuestion ? 'Terminer le quiz' : 'Question suivante'),
+              label: Text(
+                isLastQuestion
+                    ? RifinoText.tr(context, fr: 'Terminer le quiz', en: 'Finish quiz')
+                    : RifinoText.tr(context, fr: 'Question suivante', en: 'Next question'),
+              ),
               style: FilledButton.styleFrom(backgroundColor: RifinoColors.accentBlue),
             ),
           ),
@@ -356,30 +365,34 @@ class _ResultView extends StatelessWidget {
               ),
               const SizedBox(height: 18),
               Text(
-                _resultTitle(percent),
+                _resultTitle(context, percent),
                 textAlign: TextAlign.center,
                 style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w900),
               ),
               const SizedBox(height: 8),
-              const Text(
-                'Voici ta correction détaillée.',
+              Text(
+                RifinoText.tr(
+                  context,
+                  fr: 'Voici ta correction détaillée.',
+                  en: 'Here is your detailed correction.',
+                ),
                 textAlign: TextAlign.center,
-                style: TextStyle(color: RifinoColors.textSecondary, fontWeight: FontWeight.w700),
+                style: const TextStyle(color: RifinoColors.textSecondary, fontWeight: FontWeight.w700),
               ),
               const SizedBox(height: 18),
               FilledButton.icon(
                 onPressed: onRestart,
                 icon: const Icon(Icons.refresh_rounded),
-                label: const Text('Recommencer'),
+                label: Text(RifinoText.tr(context, fr: 'Recommencer', en: 'Restart')),
                 style: FilledButton.styleFrom(backgroundColor: RifinoColors.accentBlue),
               ),
             ],
           ),
         ),
         const SizedBox(height: RifinoSpacing.lg),
-        const Text(
-          'Correction',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
+        Text(
+          RifinoText.tr(context, fr: 'Correction', en: 'Correction'),
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
         ),
         const SizedBox(height: RifinoSpacing.md),
         for (var index = 0; index < answers.length; index++)
@@ -394,10 +407,18 @@ class _ResultView extends StatelessWidget {
     );
   }
 
-  String _resultTitle(int percent) {
-    if (percent >= 80) return 'Très bonne note';
-    if (percent >= 50) return 'Pas mal, continue';
-    return 'À revoir tranquillement';
+  String _resultTitle(BuildContext context, int percent) {
+    if (percent >= 80) {
+      return RifinoText.tr(context, fr: 'Très bonne note', en: 'Great score');
+    }
+    if (percent >= 50) {
+      return RifinoText.tr(context, fr: 'Pas mal, continue', en: 'Not bad, keep going');
+    }
+    return RifinoText.tr(
+      context,
+      fr: 'À revoir tranquillement',
+      en: 'Review this calmly',
+    );
   }
 }
 
@@ -434,12 +455,16 @@ class _CorrectionRow extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '$index. ${answer.question.prompt}',
+                  '$index. ${RifinoText.word(context, answer.question.prompt)}',
                   style: const TextStyle(fontWeight: FontWeight.w900),
                 ),
                 const SizedBox(height: 5),
                 Text(
-                  'Ta réponse: ${answer.selectedAnswer}',
+                  RifinoText.tr(
+                    context,
+                    fr: 'Ta réponse: ${answer.selectedAnswer}',
+                    en: 'Your answer: ${answer.selectedAnswer}',
+                  ),
                   style: const TextStyle(
                     color: RifinoColors.textSecondary,
                     fontSize: 12,
@@ -448,7 +473,11 @@ class _CorrectionRow extends StatelessWidget {
                 ),
                 const SizedBox(height: 3),
                 Text(
-                  'Correction: ${answer.question.answer}',
+                  RifinoText.tr(
+                    context,
+                    fr: 'Correction: ${answer.question.answer}',
+                    en: 'Correction: ${answer.question.answer}',
+                  ),
                   style: TextStyle(
                     color: color,
                     fontSize: 12,

@@ -11,12 +11,20 @@ import 'package:rifino/features/quiz/quiz_screen.dart';
 import 'package:rifino/features/saved/saved_screen.dart';
 import 'package:rifino/features/settings/settings_screen.dart';
 import 'package:rifino/shared/data/dictionary_data.dart';
+import 'package:rifino/shared/localization/rifino_language.dart';
 import 'package:rifino/shared/models/saved_entry.dart';
 import 'package:rifino/shared/widgets/rifino_bottom_nav.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AppShell extends StatefulWidget {
-  const AppShell({super.key});
+  const AppShell({
+    required this.languageCode,
+    required this.onLanguageChanged,
+    super.key,
+  });
+
+  final String languageCode;
+  final ValueChanged<String> onLanguageChanged;
 
   @override
   State<AppShell> createState() => _AppShellState();
@@ -158,21 +166,21 @@ class _AppShellState extends State<AppShell> {
     _persistSavedEntries();
   }
 
-  List<RifinoHomeNotification> get _homeNotifications {
+  List<RifinoHomeNotification> _homeNotifications(BuildContext context) {
     if (!_notifications) return const [];
 
-    return const [
+    return [
       RifinoHomeNotification(
         id: 'daily-practice',
-        title: 'Pratique du jour',
-        body: 'Reprends 5 minutes de rifain pour garder ton rythme.',
+        title: RifinoText.dailyPracticeTitle(context),
+        body: RifinoText.dailyPracticeBody(context),
         icon: Icons.local_fire_department_rounded,
       ),
     ];
   }
 
-  int get _unreadNotificationCount {
-    return _homeNotifications
+  int _unreadNotificationCount(BuildContext context) {
+    return _homeNotifications(context)
         .where((notification) => !_readNotificationIds.contains(notification.id))
         .length;
   }
@@ -224,7 +232,7 @@ class _AppShellState extends State<AppShell> {
   }
 
   void _markNotificationsOpened() {
-    final ids = _homeNotifications.map((notification) => notification.id);
+    final ids = _homeNotifications(context).map((notification) => notification.id);
     setState(() => _readNotificationIds.addAll(ids));
     _persistNotificationState();
   }
@@ -251,8 +259,8 @@ class _AppShellState extends State<AppShell> {
           onOpenLessons: () => _goTo(AppRoute.lessons),
           onOpenLesson: _openLesson,
           wordOfDay: _launchWord,
-          notifications: _homeNotifications,
-          unreadNotificationCount: _unreadNotificationCount,
+          notifications: _homeNotifications(context),
+          unreadNotificationCount: _unreadNotificationCount(context),
           onNotificationsOpened: _markNotificationsOpened,
           currentStreakDays: _currentStreakDays,
           activeWeekDays: _activeWeekDays,
@@ -275,7 +283,10 @@ class _AppShellState extends State<AppShell> {
           entries: _savedEntries.values.toList(),
           onRemove: _removeSavedEntry,
         ),
-      AppRoute.settings => const SettingsScreen(),
+      AppRoute.settings => SettingsScreen(
+          languageCode: widget.languageCode,
+          onLanguageChanged: widget.onLanguageChanged,
+        ),
       AppRoute.audio => AudioScreen(
           onBack: () => _goTo(AppRoute.learning),
           savedIds: _savedEntries.keys.toSet(),

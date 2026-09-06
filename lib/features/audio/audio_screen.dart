@@ -2,6 +2,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:rifino/core/theme/rifino_colors.dart';
 import 'package:rifino/core/theme/rifino_spacing.dart';
+import 'package:rifino/shared/localization/rifino_language.dart';
 import 'package:rifino/shared/models/saved_entry.dart';
 import 'package:rifino/shared/widgets/rifino_card.dart';
 import 'package:rifino/shared/widgets/rifino_top_bar.dart';
@@ -151,24 +152,32 @@ class _AudioScreenState extends State<AudioScreen> {
               ),
               borderRadius: BorderRadius.circular(18),
             ),
-            child: const Row(
+            child: Row(
               children: [
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Audio & Prononciation',
-                        style: TextStyle(
+                        RifinoText.tr(
+                          context,
+                          fr: 'Audio & Prononciation',
+                          en: 'Audio & Pronunciation',
+                        ),
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 22,
                           fontWeight: FontWeight.w900,
                         ),
                       ),
-                      SizedBox(height: 6),
+                      const SizedBox(height: 6),
                       Text(
-                        'Écoute les pronoms personnels et répète à voix haute.',
-                        style: TextStyle(
+                        RifinoText.tr(
+                          context,
+                          fr: 'Écoute les pronoms personnels et répète à voix haute.',
+                          en: 'Listen to personal pronouns and repeat out loud.',
+                        ),
+                        style: const TextStyle(
                           color: Color(0xFFDCE8F7),
                           fontWeight: FontWeight.w700,
                         ),
@@ -176,7 +185,7 @@ class _AudioScreenState extends State<AudioScreen> {
                     ],
                   ),
                 ),
-                CircleAvatar(
+                const CircleAvatar(
                   radius: 29,
                   backgroundColor: Colors.white24,
                   child: Icon(Icons.volume_up_outlined, color: Colors.white, size: 30),
@@ -185,9 +194,9 @@ class _AudioScreenState extends State<AudioScreen> {
             ),
           ),
           const SizedBox(height: RifinoSpacing.lg),
-          const Text(
-            'Pronoms personnels',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
+          Text(
+            RifinoText.tr(context, fr: 'Pronoms personnels', en: 'Personal pronouns'),
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
           ),
           const SizedBox(height: RifinoSpacing.md),
           for (final item in audioItems)
@@ -204,7 +213,11 @@ class _AudioScreenState extends State<AudioScreen> {
                       id: _audioSavedId(item),
                       kind: SavedEntryKind.audio,
                       title: item.title,
-                      subtitle: '${item.translation} - Pronoms personnels',
+                      subtitle: RifinoText.tr(
+                        context,
+                        fr: '${item.translation} - Pronoms personnels',
+                        en: '${RifinoText.word(context, item.translation)} - Personal pronouns',
+                      ),
                     ),
                   );
                 },
@@ -269,7 +282,7 @@ class _AudioRow extends StatelessWidget {
                     ),
                     const SizedBox(height: 3),
                     Text(
-                      item.translation,
+                      RifinoText.word(context, item.translation),
                       style: const TextStyle(
                         color: RifinoColors.textSecondary,
                         fontWeight: FontWeight.w700,
@@ -290,7 +303,9 @@ class _AudioRow extends StatelessWidget {
             color: RifinoColors.primary,
           ),
           IconButton(
-            tooltip: saved ? 'Retirer' : 'Enregistrer',
+            tooltip: saved
+                ? RifinoText.tr(context, fr: 'Retirer', en: 'Remove')
+                : RifinoText.tr(context, fr: 'Enregistrer', en: 'Save'),
             onPressed: onToggleSaved,
             icon: Icon(saved ? Icons.bookmark : Icons.bookmark_border),
             color: saved ? RifinoColors.accentBlue : RifinoColors.purple,

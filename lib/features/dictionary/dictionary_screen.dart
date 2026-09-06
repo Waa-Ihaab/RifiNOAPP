@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:rifino/core/theme/rifino_colors.dart';
 import 'package:rifino/core/theme/rifino_spacing.dart';
 import 'package:rifino/shared/data/dictionary_data.dart';
+import 'package:rifino/shared/localization/rifino_language.dart';
 import 'package:rifino/shared/models/saved_entry.dart';
 import 'package:rifino/shared/widgets/rifino_top_bar.dart';
 
@@ -56,7 +57,9 @@ class _DictionaryScreenState extends State<DictionaryScreen> {
       final entries = query.isEmpty
           ? category.entries
           : category.entries.where((entry) {
-              return '${entry.fr} ${entry.rif}'.toLowerCase().contains(query);
+              return '${entry.fr} ${RifinoText.word(context, entry.fr)} ${entry.rif}'
+                  .toLowerCase()
+                  .contains(query);
             }).toList();
 
       if (entries.isEmpty) return <DictionaryCategory>[];
@@ -72,7 +75,10 @@ class _DictionaryScreenState extends State<DictionaryScreen> {
     final visibleCount = filtered.fold(0, (sum, item) => sum + item.entries.length);
 
     return Scaffold(
-      appBar: RifinoTopBar(title: 'Dictionnaire', onBack: widget.onBack),
+      appBar: RifinoTopBar(
+        title: RifinoText.tr(context, fr: 'Dictionnaire', en: 'Dictionary'),
+        onBack: widget.onBack,
+      ),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 86),
         children: [
@@ -98,7 +104,11 @@ class _DictionaryScreenState extends State<DictionaryScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Français - Rifain\n${dictionaryCategories.length} catégories - $dictionaryWordCount mots',
+                  RifinoText.tr(
+                    context,
+                    fr: 'Français - Rifain\n${dictionaryCategories.length} catégories - $dictionaryWordCount mots',
+                    en: 'French - Rif\n${dictionaryCategories.length} categories - $dictionaryWordCount words',
+                  ),
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 20,
@@ -119,7 +129,11 @@ class _DictionaryScreenState extends State<DictionaryScreen> {
             controller: _searchController,
             onChanged: (value) => setState(() => _query = value),
             decoration: InputDecoration(
-              hintText: 'Rechercher un mot',
+              hintText: RifinoText.tr(
+                context,
+                fr: 'Rechercher un mot',
+                en: 'Search for a word',
+              ),
               prefixIcon: const Icon(Icons.search),
               suffixIcon: _query.isEmpty
                   ? null
@@ -138,7 +152,7 @@ class _DictionaryScreenState extends State<DictionaryScreen> {
             child: Row(
               children: [
                 _FilterChip(
-                  label: _all,
+                  label: RifinoText.tr(context, fr: _all, en: 'All'),
                   active: _selectedCategory == _all,
                   onTap: () => setState(() {
                     _selectedCategory = _all;
@@ -148,7 +162,7 @@ class _DictionaryScreenState extends State<DictionaryScreen> {
                 ),
                 for (final category in dictionaryCategories)
                   _FilterChip(
-                    label: category.title,
+                    label: RifinoText.dictionaryCategory(context, category.title),
                     active: _selectedCategory == category.title,
                     onTap: () => setState(() {
                       _selectedCategory = category.title;
@@ -162,7 +176,11 @@ class _DictionaryScreenState extends State<DictionaryScreen> {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: RifinoSpacing.md),
             child: Text(
-              '$visibleCount résultat${visibleCount > 1 ? 's' : ''}',
+              RifinoText.tr(
+                context,
+                fr: '$visibleCount résultat${visibleCount > 1 ? 's' : ''}',
+                en: '$visibleCount result${visibleCount > 1 ? 's' : ''}',
+              ),
               style: const TextStyle(color: RifinoColors.purple, fontSize: 12, fontWeight: FontWeight.w900),
             ),
           ),
@@ -180,13 +198,22 @@ class _DictionaryScreenState extends State<DictionaryScreen> {
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(color: RifinoColors.border),
               ),
-              child: const Column(
+              child: Column(
                 children: [
-                  Icon(Icons.search, color: RifinoColors.textSecondary),
-                  SizedBox(height: 8),
-                  Text('Aucun mot trouvé', style: TextStyle(fontWeight: FontWeight.w900)),
-                  SizedBox(height: 4),
-                  Text('Essaie un autre mot en français ou en rifain.'),
+                  const Icon(Icons.search, color: RifinoColors.textSecondary),
+                  const SizedBox(height: 8),
+                  Text(
+                    RifinoText.tr(context, fr: 'Aucun mot trouvé', en: 'No words found'),
+                    style: const TextStyle(fontWeight: FontWeight.w900),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    RifinoText.tr(
+                      context,
+                      fr: 'Essaie un autre mot en français ou en rifain.',
+                      en: 'Try another word in French or Rif.',
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -255,8 +282,18 @@ class _CategoryBlock extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(category.title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w900)),
-                    Text('${category.entries.length} mots', style: const TextStyle(color: RifinoColors.textSecondary, fontSize: 11, fontWeight: FontWeight.w800)),
+                    Text(
+                      RifinoText.dictionaryCategory(context, category.title),
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w900),
+                    ),
+                    Text(
+                      RifinoText.tr(
+                        context,
+                        fr: '${category.entries.length} mots',
+                        en: '${category.entries.length} words',
+                      ),
+                      style: const TextStyle(color: RifinoColors.textSecondary, fontSize: 11, fontWeight: FontWeight.w800),
+                    ),
                   ],
                 ),
               ),
@@ -304,7 +341,10 @@ class _DictionaryRow extends StatelessWidget {
 
     return ListTile(
       dense: true,
-      title: Text(entry.fr, style: const TextStyle(fontWeight: FontWeight.w900)),
+      title: Text(
+        RifinoText.word(context, entry.fr),
+        style: const TextStyle(fontWeight: FontWeight.w900),
+      ),
       trailing: SizedBox(
         width: 164,
         child: Row(
@@ -321,14 +361,17 @@ class _DictionaryRow extends StatelessWidget {
             ),
             const SizedBox(width: 4),
             IconButton(
-              tooltip: saved ? 'Retirer' : 'Enregistrer',
+              tooltip: saved
+                  ? RifinoText.tr(context, fr: 'Retirer', en: 'Remove')
+                  : RifinoText.tr(context, fr: 'Enregistrer', en: 'Save'),
               onPressed: () {
                 onToggleSaved(
                   SavedEntry(
                     id: savedId,
                     kind: SavedEntryKind.word,
                     title: entry.rif,
-                    subtitle: '${entry.fr} - ${category.title}',
+                    subtitle:
+                        '${RifinoText.word(context, entry.fr)} - ${RifinoText.dictionaryCategory(context, category.title)}',
                   ),
                 );
               },

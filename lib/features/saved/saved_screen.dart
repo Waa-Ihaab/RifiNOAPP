@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:rifino/core/theme/rifino_colors.dart';
 import 'package:rifino/core/theme/rifino_spacing.dart';
+import 'package:rifino/shared/localization/rifino_language.dart';
 import 'package:rifino/shared/models/saved_entry.dart';
 import 'package:rifino/shared/widgets/rifino_card.dart';
 import 'package:rifino/shared/widgets/rifino_top_bar.dart';
@@ -21,8 +22,12 @@ class SavedScreen extends StatelessWidget {
     final words = entries.where((entry) => entry.kind == SavedEntryKind.word).toList();
     final lessons = entries.where((entry) => entry.kind == SavedEntryKind.lesson).toList();
 
+    final audioLabel = RifinoText.tr(context, fr: 'Audios', en: 'Audio');
+    final wordLabel = RifinoText.tr(context, fr: 'Mots', en: 'Words');
+    final lessonLabel = RifinoText.tr(context, fr: 'Leçons', en: 'Lessons');
+
     return Scaffold(
-      appBar: const RifinoTopBar(title: 'Enregistrés'),
+      appBar: RifinoTopBar(title: RifinoText.saved(context)),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(18, 16, 18, 104),
         children: [
@@ -44,7 +49,11 @@ class SavedScreen extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    'Mes favoris\n${entries.length} élément${entries.length > 1 ? 's' : ''} gardé${entries.length > 1 ? 's' : ''}',
+                    RifinoText.tr(
+                      context,
+                      fr: 'Mes favoris\n${entries.length} élément${entries.length > 1 ? 's' : ''} gardé${entries.length > 1 ? 's' : ''}',
+                      en: 'My favorites\n${entries.length} saved item${entries.length > 1 ? 's' : ''}',
+                    ),
                     style: const TextStyle(
                       color: Colors.white,
                       height: 1.35,
@@ -67,19 +76,19 @@ class SavedScreen extends StatelessWidget {
             runSpacing: 8,
             children: [
               _StatChip(
-                label: 'Audios',
+                label: audioLabel,
                 value: '${audios.length}',
                 icon: Icons.volume_up_rounded,
                 color: RifinoColors.primary,
               ),
               _StatChip(
-                label: 'Mots',
+                label: wordLabel,
                 value: '${words.length}',
                 icon: Icons.text_fields_rounded,
                 color: RifinoColors.accentBlue,
               ),
               _StatChip(
-                label: 'Leçons',
+                label: lessonLabel,
                 value: '${lessons.length}',
                 icon: Icons.school_rounded,
                 color: RifinoColors.accent,
@@ -90,9 +99,9 @@ class SavedScreen extends StatelessWidget {
           if (entries.isEmpty)
             const _EmptyState()
           else ...[
-            if (audios.isNotEmpty) _SavedSection(title: 'Audios', entries: audios, onRemove: onRemove),
-            if (words.isNotEmpty) _SavedSection(title: 'Mots', entries: words, onRemove: onRemove),
-            if (lessons.isNotEmpty) _SavedSection(title: 'Leçons', entries: lessons, onRemove: onRemove),
+            if (audios.isNotEmpty) _SavedSection(title: audioLabel, entries: audios, onRemove: onRemove),
+            if (words.isNotEmpty) _SavedSection(title: wordLabel, entries: words, onRemove: onRemove),
+            if (lessons.isNotEmpty) _SavedSection(title: lessonLabel, entries: lessons, onRemove: onRemove),
           ],
         ],
       ),
@@ -176,7 +185,7 @@ class _SavedRow extends StatelessWidget {
             ),
           ),
           IconButton(
-            tooltip: 'Supprimer',
+            tooltip: RifinoText.tr(context, fr: 'Supprimer', en: 'Delete'),
             onPressed: () => onRemove(entry.id),
             icon: const Icon(Icons.delete_outline_rounded),
             color: RifinoColors.danger,
@@ -192,18 +201,25 @@ class _EmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const RifinoCard(
-      padding: EdgeInsets.all(28),
+    return RifinoCard(
+      padding: const EdgeInsets.all(28),
       child: Column(
         children: [
-          Icon(Icons.bookmark_border_rounded, size: 38, color: RifinoColors.textSecondary),
-          SizedBox(height: 10),
-          Text('Rien ici pour le moment', style: TextStyle(fontWeight: FontWeight.w900)),
-          SizedBox(height: 5),
+          const Icon(Icons.bookmark_border_rounded, size: 38, color: RifinoColors.textSecondary),
+          const SizedBox(height: 10),
           Text(
-            'Garde tes audios, mots et leçons favoris ici.',
+            RifinoText.tr(context, fr: 'Rien ici pour le moment', en: 'Nothing here yet'),
+            style: const TextStyle(fontWeight: FontWeight.w900),
+          ),
+          const SizedBox(height: 5),
+          Text(
+            RifinoText.tr(
+              context,
+              fr: 'Garde tes audios, mots et leçons favoris ici.',
+              en: 'Keep your favorite audio, words and lessons here.',
+            ),
             textAlign: TextAlign.center,
-            style: TextStyle(color: RifinoColors.textSecondary, fontWeight: FontWeight.w700),
+            style: const TextStyle(color: RifinoColors.textSecondary, fontWeight: FontWeight.w700),
           ),
         ],
       ),

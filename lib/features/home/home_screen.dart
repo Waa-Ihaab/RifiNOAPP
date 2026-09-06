@@ -1,9 +1,9 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:rifino/core/theme/rifino_colors.dart';
 import 'package:rifino/core/theme/rifino_spacing.dart';
 import 'package:rifino/shared/data/dictionary_data.dart';
+import 'package:rifino/shared/localization/rifino_language.dart';
+import 'package:rifino/shared/widgets/rifino_ad_banner.dart';
 import 'package:rifino/shared/widgets/rifino_card.dart';
 import 'package:rifino/shared/widgets/rifino_logo.dart';
 
@@ -88,19 +88,29 @@ class HomeScreen extends StatelessWidget {
               ],
             ),
           ),
+          const SizedBox(height: 4),
+          const Center(child: RifinoAdBanner()),
           const SizedBox(height: RifinoSpacing.md),
-          const Text(
-            'Azul, on continue ?',
-            style: TextStyle(
+          Text(
+            RifinoText.tr(
+              context,
+              fr: 'Azul, on continue ?',
+              en: 'Azul, shall we continue?',
+            ),
+            style: const TextStyle(
               color: RifinoColors.textPrimary,
               fontSize: 28,
               fontWeight: FontWeight.w900,
             ),
           ),
           const SizedBox(height: 6),
-          const Text(
-            "Un petit pas aujourd'hui, ton rifain avance.",
-            style: TextStyle(
+          Text(
+            RifinoText.tr(
+              context,
+              fr: "Un petit pas aujourd'hui, ton rifain avance.",
+              en: 'One small step today, your Rif keeps growing.',
+            ),
+            style: const TextStyle(
               color: RifinoColors.textSecondary,
               fontSize: 15,
               fontWeight: FontWeight.w700,
@@ -118,8 +128,8 @@ class HomeScreen extends StatelessWidget {
             children: [
               Expanded(
                 child: _QuickAction(
-                  title: 'Leçons',
-                  subtitle: 'Reprendre',
+                  title: RifinoText.tr(context, fr: 'Leçons', en: 'Lessons'),
+                  subtitle: RifinoText.tr(context, fr: 'Reprendre', en: 'Resume'),
                   icon: Icons.school_rounded,
                   color: RifinoColors.accentBlue,
                   onTap: onOpenLessons,
@@ -129,7 +139,11 @@ class HomeScreen extends StatelessWidget {
               Expanded(
                 child: _QuickAction(
                   title: 'Dico',
-                  subtitle: '$dictionaryWordCount mots',
+                  subtitle: RifinoText.tr(
+                    context,
+                    fr: '$dictionaryWordCount mots',
+                    en: '$dictionaryWordCount words',
+                  ),
                   icon: Icons.menu_book_rounded,
                   color: RifinoColors.accentBlue,
                   onTap: onOpenDictionary,
@@ -144,8 +158,6 @@ class HomeScreen extends StatelessWidget {
           ),
           const SizedBox(height: RifinoSpacing.md),
           _FeaturedNumbers(onOpenNumbers: onOpenNumbers),
-          const SizedBox(height: RifinoSpacing.md),
-          const _HomeBlurBlock(),
         ],
       ),
     );
@@ -181,9 +193,9 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 18),
-                const Text(
-                  'Notifications',
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900),
+                Text(
+                  RifinoText.tr(context, fr: 'Notifications', en: 'Notifications'),
+                  style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w900),
                 ),
                 const SizedBox(height: 14),
                 if (notifications.isEmpty)
@@ -270,23 +282,27 @@ class _EmptyNotifications extends StatelessWidget {
         color: RifinoColors.surfaceMuted,
         borderRadius: BorderRadius.circular(RifinoRadius.lg),
       ),
-      child: const Column(
+      child: Column(
         children: [
-          Icon(
+          const Icon(
             Icons.notifications_off_outlined,
             color: RifinoColors.textSecondary,
             size: 34,
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Text(
-            'Aucune notification',
-            style: TextStyle(fontWeight: FontWeight.w900),
+            RifinoText.tr(context, fr: 'Aucune notification', en: 'No notifications'),
+            style: const TextStyle(fontWeight: FontWeight.w900),
           ),
-          SizedBox(height: 4),
+          const SizedBox(height: 4),
           Text(
-            'Tu es à jour pour le moment.',
+            RifinoText.tr(
+              context,
+              fr: 'Tu es à jour pour le moment.',
+              en: "You're all caught up for now.",
+            ),
             textAlign: TextAlign.center,
-            style: TextStyle(
+            style: const TextStyle(
               color: RifinoColors.textSecondary,
               fontWeight: FontWeight.w700,
             ),
@@ -354,10 +370,20 @@ class _ProgressHero extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const days = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
+    final days = RifinoLanguageScope.isEnglish(context)
+        ? const ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+        : const ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
     final streakLabel = currentStreakDays <= 1
-        ? '$currentStreakDays jour actif'
-        : '$currentStreakDays jours actifs';
+        ? RifinoText.tr(
+            context,
+            fr: '$currentStreakDays jour actif',
+            en: '$currentStreakDays active day',
+          )
+        : RifinoText.tr(
+            context,
+            fr: '$currentStreakDays jours actifs',
+            en: '$currentStreakDays active days',
+          );
 
     return Container(
       padding: const EdgeInsets.all(20),
@@ -381,9 +407,9 @@ class _ProgressHero extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Série actuelle',
-                      style: TextStyle(
+                    Text(
+                      RifinoText.tr(context, fr: 'Série actuelle', en: 'Current streak'),
+                      style: const TextStyle(
                         color: Color(0xFFC9D6E8),
                         fontSize: 12,
                         fontWeight: FontWeight.w900,
@@ -408,7 +434,7 @@ class _ProgressHero extends StatelessWidget {
                   foregroundColor: Colors.white,
                   minimumSize: const Size(108, 46),
                 ),
-                child: const Text('Pratiquer'),
+                child: Text(RifinoText.tr(context, fr: 'Pratiquer', en: 'Practice')),
               ),
             ],
           ),
@@ -535,20 +561,26 @@ class _FeaturedLessons extends StatelessWidget {
 
   static const List<_FeaturedLessonData> _lessons = [
     _FeaturedLessonData(
-      title: 'Salutations',
-      subtitle: 'Apprendre les mots de base pour saluer.',
+      titleFr: 'Salutations',
+      titleEn: 'Greetings',
+      subtitleFr: 'Apprendre les mots de base pour saluer.',
+      subtitleEn: 'Learn basic words to greet people.',
       icon: Icons.waving_hand_rounded,
       directLessonId: 'lesson-4',
     ),
     _FeaturedLessonData(
-      title: 'Pronoms personnels',
-      subtitle: 'Comprendre les bases des phrases simples.',
+      titleFr: 'Pronoms personnels',
+      titleEn: 'Personal pronouns',
+      subtitleFr: 'Comprendre les bases des phrases simples.',
+      subtitleEn: 'Understand the basics of simple sentences.',
       icon: Icons.record_voice_over_rounded,
       directLessonId: 'lesson-1',
     ),
     _FeaturedLessonData(
-      title: 'Famille',
-      subtitle: 'Découvrir les mots liés à la famille.',
+      titleFr: 'Famille',
+      titleEn: 'Family',
+      subtitleFr: 'Découvrir les mots liés à la famille.',
+      subtitleEn: 'Discover words related to family.',
       icon: Icons.groups_rounded,
       directLessonId: 'lesson-2',
     ),
@@ -559,7 +591,13 @@ class _FeaturedLessons extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const _SectionHeader(title: 'Commencer à apprendre'),
+        _SectionHeader(
+          title: RifinoText.tr(
+            context,
+            fr: 'Commencer à apprendre',
+            en: 'Start learning',
+          ),
+        ),
         const SizedBox(height: 12),
         for (final lesson in _lessons) ...[
           _FeaturedLessonRow(
@@ -611,7 +649,11 @@ class _FeaturedLessonRow extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    lesson.title,
+                  RifinoText.tr(
+                    context,
+                    fr: lesson.titleFr,
+                    en: lesson.titleEn,
+                  ),
                     style: const TextStyle(
                       color: RifinoColors.textPrimary,
                       fontSize: 17,
@@ -620,7 +662,11 @@ class _FeaturedLessonRow extends StatelessWidget {
                   ),
                   const SizedBox(height: 3),
                   Text(
-                    lesson.subtitle,
+                  RifinoText.tr(
+                    context,
+                    fr: lesson.subtitleFr,
+                    en: lesson.subtitleEn,
+                  ),
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
                       color: RifinoColors.textSecondary,
@@ -644,14 +690,18 @@ class _FeaturedLessonRow extends StatelessWidget {
 
 class _FeaturedLessonData {
   const _FeaturedLessonData({
-    required this.title,
-    required this.subtitle,
+    required this.titleFr,
+    required this.titleEn,
+    required this.subtitleFr,
+    required this.subtitleEn,
     required this.icon,
     this.directLessonId,
   });
 
-  final String title;
-  final String subtitle;
+  final String titleFr;
+  final String titleEn;
+  final String subtitleFr;
+  final String subtitleEn;
   final IconData icon;
   final String? directLessonId;
 }
@@ -684,7 +734,7 @@ class _FeaturedNumbers extends StatelessWidget {
     return InkWell(
       onTap: onOpenNumbers,
       borderRadius: BorderRadius.circular(RifinoRadius.lg),
-      child: const RifinoCard(
+      child: RifinoCard(
         color: RifinoColors.surfaceMuted,
         borderColor: Colors.transparent,
         child: Column(
@@ -692,27 +742,35 @@ class _FeaturedNumbers extends StatelessWidget {
           children: [
             Row(
               children: [
-                CircleAvatar(
+                const CircleAvatar(
                   radius: 25,
                   backgroundColor: Colors.white,
                   child:
                       Icon(Icons.pin_rounded, color: RifinoColors.accentBlue),
                 ),
-                SizedBox(width: 12),
+                const SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Compter jusqu'à 5",
-                        style: TextStyle(
+                        RifinoText.tr(
+                          context,
+                          fr: "Compter jusqu'à 5",
+                          en: 'Count to 5',
+                        ),
+                        style: const TextStyle(
                             fontSize: 16, fontWeight: FontWeight.w900),
                       ),
-                      SizedBox(height: 3),
+                      const SizedBox(height: 3),
                       Text(
-                        'Ouvre les nombres dans le dictionnaire',
+                        RifinoText.tr(
+                          context,
+                          fr: 'Ouvre les nombres dans le dictionnaire',
+                          en: 'Open numbers in the dictionary',
+                        ),
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: RifinoColors.textSecondary,
                           fontSize: 12,
                           fontWeight: FontWeight.w800,
@@ -721,20 +779,35 @@ class _FeaturedNumbers extends StatelessWidget {
                     ],
                   ),
                 ),
-                Icon(Icons.chevron_right_rounded,
+                const Icon(Icons.chevron_right_rounded,
                     color: RifinoColors.textSecondary),
               ],
             ),
-            SizedBox(height: 14),
+            const SizedBox(height: 14),
             Wrap(
               spacing: 8,
               runSpacing: 8,
               children: [
-                _NumberChip(fr: 'un', rif: 'wahid'),
-                _NumberChip(fr: 'deux', rif: 'tnayen'),
-                _NumberChip(fr: 'trois', rif: 'tratha'),
-                _NumberChip(fr: 'quatre', rif: 'arabaa'),
-                _NumberChip(fr: 'cinq', rif: 'khamssa'),
+                _NumberChip(
+                  fr: RifinoText.tr(context, fr: 'un', en: 'one'),
+                  rif: 'wahid',
+                ),
+                _NumberChip(
+                  fr: RifinoText.tr(context, fr: 'deux', en: 'two'),
+                  rif: 'tnayen',
+                ),
+                _NumberChip(
+                  fr: RifinoText.tr(context, fr: 'trois', en: 'three'),
+                  rif: 'tratha',
+                ),
+                _NumberChip(
+                  fr: RifinoText.tr(context, fr: 'quatre', en: 'four'),
+                  rif: 'arabaa',
+                ),
+                _NumberChip(
+                  fr: RifinoText.tr(context, fr: 'cinq', en: 'five'),
+                  rif: 'khamssa',
+                ),
               ],
             ),
           ],
@@ -780,70 +853,6 @@ class _NumberChip extends StatelessWidget {
               color: RifinoColors.primary,
               fontSize: 12,
               fontWeight: FontWeight.w900,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _HomeBlurBlock extends StatelessWidget {
-  const _HomeBlurBlock();
-
-  @override
-  Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(RifinoRadius.lg),
-      child: Stack(
-        children: [
-          Container(
-            constraints: const BoxConstraints(minHeight: 86),
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: RifinoColors.primary.withValues(alpha: 0.08),
-              border: Border.all(color: Colors.white.withValues(alpha: 0.55)),
-            ),
-            child: Row(
-              children: [
-                CircleAvatar(
-                  backgroundColor: Colors.white.withValues(alpha: 0.74),
-                  child: const Icon(
-                    Icons.auto_graph_rounded,
-                    color: RifinoColors.primary,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                const Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Bloc Rifino',
-                        style: TextStyle(fontWeight: FontWeight.w900),
-                      ),
-                      SizedBox(height: 3),
-                      Text(
-                        'Bientôt',
-                        style: TextStyle(
-                          color: RifinoColors.textSecondary,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const Icon(Icons.lock_outline_rounded,
-                    color: RifinoColors.textSecondary),
-              ],
-            ),
-          ),
-          Positioned.fill(
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 2.1, sigmaY: 2.1),
-              child: Container(color: Colors.white.withValues(alpha: 0.13)),
             ),
           ),
         ],

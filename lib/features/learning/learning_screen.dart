@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:rifino/core/theme/rifino_colors.dart';
 import 'package:rifino/core/theme/rifino_spacing.dart';
+import 'package:rifino/shared/localization/rifino_language.dart';
+import 'package:rifino/shared/widgets/rifino_ad_banner.dart';
 import 'package:rifino/shared/widgets/rifino_card.dart';
 
 class LearningScreen extends StatelessWidget {
@@ -23,16 +25,22 @@ class LearningScreen extends StatelessWidget {
       child: ListView(
         padding: const EdgeInsets.fromLTRB(18, 12, 18, 104),
         children: [
-          const Text(
-            'Apprendre',
+          const Center(child: RifinoAdBanner()),
+          const SizedBox(height: RifinoSpacing.md),
+          Text(
+            RifinoText.learning(context),
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 30, fontWeight: FontWeight.w900),
+            style: const TextStyle(fontSize: 30, fontWeight: FontWeight.w900),
           ),
           const SizedBox(height: 7),
-          const Text(
-            'Choisis ton mode et garde ton rythme.',
+          Text(
+            RifinoText.tr(
+              context,
+              fr: 'Choisis ton mode et garde ton rythme.',
+              en: 'Choose your mode and keep your rhythm.',
+            ),
             textAlign: TextAlign.center,
-            style: TextStyle(
+            style: const TextStyle(
               color: RifinoColors.textSecondary,
               fontWeight: FontWeight.w700,
             ),
@@ -50,28 +58,28 @@ class LearningScreen extends StatelessWidget {
             children: [
               _LearningTile(
                 title: 'Audio',
-                subtitle: 'Écoute et répète',
+                subtitle: RifinoText.tr(context, fr: 'Écoute et répète', en: 'Listen and repeat'),
                 icon: Icons.volume_up_rounded,
                 color: RifinoColors.accentBlue,
                 onTap: onOpenAudio,
               ),
               _LearningTile(
                 title: 'Dico',
-                subtitle: 'Mots utiles',
+                subtitle: RifinoText.tr(context, fr: 'Mots utiles', en: 'Useful words'),
                 icon: Icons.menu_book_rounded,
                 color: RifinoColors.purple,
                 onTap: onOpenDictionary,
               ),
               _LearningTile(
                 title: 'Quiz',
-                subtitle: 'Teste-toi',
+                subtitle: RifinoText.tr(context, fr: 'Teste-toi', en: 'Test yourself'),
                 icon: Icons.check_circle_rounded,
                 color: RifinoColors.accent,
                 onTap: onOpenQuiz,
               ),
               _LearningTile(
-                title: 'Leçons',
-                subtitle: 'Cours guidés',
+                title: RifinoText.tr(context, fr: 'Leçons', en: 'Lessons'),
+                subtitle: RifinoText.tr(context, fr: 'Cours guidés', en: 'Guided lessons'),
                 icon: Icons.school_rounded,
                 color: RifinoColors.coral,
                 onTap: onOpenLessons,
@@ -123,22 +131,30 @@ class _FeaturedLesson extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 16),
-            const Expanded(
+            Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Continue la leçon',
-                    style: TextStyle(
+                    RifinoText.tr(
+                      context,
+                      fr: 'Continue la leçon',
+                      en: 'Continue the lesson',
+                    ),
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 20,
                       fontWeight: FontWeight.w900,
                     ),
                   ),
-                  SizedBox(height: 5),
+                  const SizedBox(height: 5),
                   Text(
-                    'Pronoms personnels - 5 min',
-                    style: TextStyle(
+                    RifinoText.tr(
+                      context,
+                      fr: 'Pronoms personnels - 5 min',
+                      en: 'Personal pronouns - 5 min',
+                    ),
+                    style: const TextStyle(
                       color: Color(0xFFC9D6E8),
                       fontWeight: FontWeight.w700,
                     ),
